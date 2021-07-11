@@ -8,11 +8,11 @@ app.use(express.static(__dirname))
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
 })
 
 app.get("/", (req, res) => {
-        res.sendFile(__dirname + "/signup.html")
+        res.sendFile(__dirname + "/index.html")
     }
 )
 
@@ -43,12 +43,23 @@ app.post("/", (req, res) => {
     }
 
     let requestMail = https.request(url, options, (response) => {
+
+        if(response.statusCode === 200){
+            res.sendFile(__dirname + "/success.html")
+        }else res.sendFile(__dirname + "/error.html")
+
+
         response.on("data", (data)=>{
             console.log(JSON.parse(data))
         })
+
     })
     requestMail.write(jsonData)
     requestMail.end()
+})
+
+app.post("/error", (req, res)=>{
+res.redirect("/")
 })
 
 //a661ff30ac2d888b16f0c2054a94cc5d-us6
